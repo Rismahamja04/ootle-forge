@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ootle Forge — a collectible crafting game on Tari Ootle</title>
+<meta name="description" content="Gather EMBER, forge Relic NFTs, ascend the tiers, melt the duplicates. A walletless browser simulation of the Ootle Forge template on Tari Ootle.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">⚒️</span>
+    <div>
+      <h1>Ootle Forge</h1>
+      <p class="tagline">Gather embers. Forge relics. Climb the tiers.</p>
+    </div>
+  </div>
+  <span class="sim-badge" title="This demo runs the same rules as the Rust template, locally in your browser. No wallet, no network, no fees.">SIMULATION — no wallet needed</span>
+</header>
+
+<main>
+  <section class="panel" id="player-panel">
+    <div class="panel-head">
+      <h2>Your forge</h2>
+      <div class="balances">
+        <span class="balance"><span class="res-icon ember">◆</span> <strong id="bal-ember">0</strong> EMBER</span>
+        <span class="balance"><span class="res-icon tari">◉</span> <strong id="bal-tari">0</strong> TARI</span>
+        <span class="balance"><span class="res-icon relic">⬢</span> <strong id="bal-relics">0</strong> Relics</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="btn-gather" class="action primary">
+        Gather <span class="cost">+5 EMBER</span>
+      </button>
+      <button id="btn-forge" class="action primary">
+        Forge a Relic <span class="cost">5 EMBER + 1 TARI</span>
+      </button>
+      <button id="btn-faucet" class="action ghost" title="Demo only: on a live network you would pay the fee from your own wallet.">
+        Simulated faucet <span class="cost">+10 TARI (demo)</span>
+      </button>
+    </div>
+    <p class="hint" id="action-hint" role="status"></p>
+    <div id="forge-reveal" class="reveal" hidden></div>
+
+    <h3>Your collection</h3>
+    <div id="ascend-bar" class="ascend-bar" hidden>
+      <span id="ascend-text"></span>
+      <button id="btn-ascend" class="action primary" disabled>Ascend</button>
+      <button id="btn-ascend-clear" class="action ghost">Clear</button>
+    </div>
+    <div id="collection" class="collection"></div>
+    <p id="collection-empty" class="empty">No Relics yet. Gather embers, then forge your first one.</p>
+  </section>
+
+  <section class="panel" id="stats-panel">
+    <h2>Forge statistics <span class="panel-sub">(mirrors the template's <code>stats()</code>)</span></h2>
+    <dl class="stats">
+      <div><dt>Embers gathered</dt><dd id="stat-gathered">0</dd></div>
+      <div><dt>Relics forged</dt><dd id="stat-forged">0</dd></div>
+      <div><dt>Relics ascended</dt><dd id="stat-ascended">0</dd></div>
+      <div><dt>Relics melted</dt><dd id="stat-melted">0</dd></div>
+      <div><dt>Fees collected</dt><dd id="stat-fees">0 TARI</dd></div>
+    </dl>
+    <h3>Rival forgesmiths</h3>
+    <div id="rivals" class="rivals"></div>
+  </section>
+
+  <section class="panel" id="log-panel">
+    <h2>Forge log <span class="panel-sub">every action, and the Ootle call it mirrors</span></h2>
+    <ol id="log" class="log"></ol>
+  </section>
+
+  <section class="panel" id="about-panel">
+    <h2>How this maps to Tari Ootle</h2>
+    <p>
+      Ootle Forge is a real Rust <code>#[template]</code> for the Tari Ootle engine
+      (see the <code>template/</code> directory of the repository). This page is a
+      <strong>walletless simulation</strong> of that template: the JavaScript engine here
+      implements the same constants and rules — same gather amount, same forge cost and
+      fee, same tier odds (62% / 26% / 9% / 3%), same melt values — so what you play here
+      is what the template does on-chain.
+    </p>
+    <table class="mapping">
+      <thead><tr><th>Here</th><th>On Ootle</th></tr></thead>
+      <tbody>
+        <tr><td>Gather</td><td><code>forge.gather()</code> — mints 5 EMBER. Only the Forge component may mint EMBER; the rule is locked at creation.</td></tr>
+        <tr><td>Forge a Relic</td><td><code>forge.forge(embers, fee)</code> — burns exactly 5 EMBER, banks a 1 TARI fee, rolls a tier from engine entropy, mints one Relic NFT.</td></tr>
+        <tr><td>Ascend</td><td><code>forge.ascend(a, b, c)</code> — burns three same-tier Relics, mints one of the next tier. Legendaries cannot ascend.</td></tr>
+        <tr><td>Melt</td><td><code>forge.melt(relic)</code> — burns one Relic, mints back 2 / 6 / 18 / 54 EMBER by tier.</td></tr>
+        <tr><td>Statistics</td><td><code>forge.stats()</code> — read-only counters plus the fee vault balance.</td></tr>
+        <tr><td>Fees</td><td><code>forge.withdraw_fees()</code> — only the holder of the Forge admin badge NFT may call it.</td></tr>
+      </tbody>
+    </table>
+    <h3>Honest notes</h3>
+    <ul class="honest">
+      <li>The template is <strong>not yet published</strong> to Esmeralda or mainnet; this demo is a simulation and is labelled as one. The template itself is proven by engine tests (<code>cargo test</code> in <code>template/</code>) that run it in the real Ootle engine in-process.</li>
+      <li>On-chain, the tier roll uses the engine's transaction entropy (<code>random_bytes</code>); here it uses local randomness with identical odds. Game-grade randomness — fine for collectibles, not for money gambling.</li>
+      <li>Relics are ordinary Ootle NFTs: once minted to your account they are yours — transferable and checkable by any app. The Forge can never mint a Relic outside <code>forge</code>/<code>ascend</code>, and nobody can change its rules: the component has no owner and locked resource rules.</li>
+      <li>Your collection is saved in this browser (localStorage). <button id="btn-reset" class="linklike">Reset the demo</button></li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <p>Ootle Forge — built for the Tari November Build Contest (“MVP”). MIT licensed. Simulation demo; no wallet, account or network is involved.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
