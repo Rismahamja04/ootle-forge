@@ -1,0 +1,212 @@
+:root {
+  --bg: #14100d;
+  --panel: #1e1813;
+  --panel-edge: #3a2d20;
+  --ink: #f3e9dc;
+  --ink-dim: #b8a88f;
+  --ember: #ff8c42;
+  --tari: #ffd166;
+  --common: #9aa3ad;
+  --rare: #4da3ff;
+  --epic: #b678ff;
+  --legendary: #ffc93c;
+  --ok: #7bd88a;
+  --bad: #ff7a6b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: radial-gradient(1200px 600px at 50% -10%, #2b1d10 0%, var(--bg) 55%);
+  color: var(--ink);
+  font-family: ui-rounded, "Segoe UI", system-ui, -apple-system, sans-serif;
+  line-height: 1.45;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.4rem 0.4rem;
+  max-width: 1060px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.brand { display: flex; gap: 0.8rem; align-items: center; }
+.brand-mark { font-size: 2.2rem; }
+.brand h1 { margin: 0; font-size: 1.7rem; letter-spacing: 0.02em; }
+.tagline { margin: 0; color: var(--ink-dim); }
+
+.sim-badge {
+  border: 1px solid var(--ember);
+  color: var(--ember);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+main {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0.8rem 1.4rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-radius: 14px;
+  padding: 1rem 1.2rem 1.2rem;
+}
+
+#player-panel { grid-column: 1 / -1; }
+#about-panel { grid-column: 1 / -1; }
+
+.panel h2 { margin: 0.2rem 0 0.7rem; font-size: 1.15rem; }
+.panel h3 { margin: 1rem 0 0.5rem; font-size: 1rem; }
+.panel-sub { color: var(--ink-dim); font-weight: 400; font-size: 0.85rem; }
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.balances { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+.balance { color: var(--ink-dim); }
+.balance strong { color: var(--ink); font-size: 1.05rem; }
+.res-icon.ember { color: var(--ember); }
+.res-icon.tari { color: var(--tari); }
+.res-icon.relic { color: var(--epic); }
+
+.actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.4rem; }
+
+button.action {
+  background: #2c2115;
+  color: var(--ink);
+  border: 1px solid var(--panel-edge);
+  border-radius: 10px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+button.action .cost { color: var(--ink-dim); font-size: 0.8rem; }
+button.action.primary { border-color: var(--ember); }
+button.action.primary:hover:not(:disabled) { background: #3a2812; }
+button.action.ghost { opacity: 0.85; }
+button.action:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.hint { min-height: 1.3em; color: var(--ink-dim); margin: 0.5rem 0 0; }
+.hint.error { color: var(--bad); }
+
+.reveal {
+  margin-top: 0.7rem;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: 1px dashed var(--ember);
+  background: #2a1c0d;
+  font-size: 1.02rem;
+}
+.reveal .tier-name { font-weight: 700; }
+
+.ascend-bar {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  background: #241a10;
+  border: 1px solid var(--panel-edge);
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.7rem;
+}
+.ascend-bar[hidden] { display: none; }
+
+.collection {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.7rem;
+}
+
+.relic-card {
+  border: 1px solid var(--panel-edge);
+  border-top: 4px solid var(--common);
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  background: #251c14;
+  cursor: pointer;
+  position: relative;
+}
+.relic-card.tier-0 { border-top-color: var(--common); }
+.relic-card.tier-1 { border-top-color: var(--rare); }
+.relic-card.tier-2 { border-top-color: var(--epic); }
+.relic-card.tier-3 { border-top-color: var(--legendary); }
+.relic-card.selected { outline: 2px solid var(--ember); }
+.relic-card .relic-icon { font-size: 1.6rem; }
+.relic-card .relic-name { font-weight: 600; display: block; }
+.relic-card .relic-tier { font-size: 0.82rem; }
+.tier-0 .relic-tier { color: var(--common); }
+.tier-1 .relic-tier { color: var(--rare); }
+.tier-2 .relic-tier { color: var(--epic); }
+.tier-3 .relic-tier { color: var(--legendary); }
+.relic-card .relic-actions { margin-top: 0.45rem; display: flex; gap: 0.4rem; }
+.relic-card .relic-actions button {
+  background: #191008;
+  color: var(--ink-dim);
+  border: 1px solid var(--panel-edge);
+  border-radius: 7px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.relic-card .relic-actions button:hover { color: var(--ink); border-color: var(--ember); }
+
+.empty { color: var(--ink-dim); }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 1rem; margin: 0; }
+.stats div { display: flex; justify-content: space-between; border-bottom: 1px dotted #3a2d20; padding: 0.25rem 0; }
+.stats dt { color: var(--ink-dim); }
+.stats dd { margin: 0; font-weight: 600; }
+
+.rivals { display: grid; gap: 0.5rem; }
+.rival { display: flex; justify-content: space-between; color: var(--ink-dim); border: 1px solid var(--panel-edge); border-radius: 10px; padding: 0.45rem 0.8rem; }
+.rival strong { color: var(--ink); }
+
+.log { list-style: none; margin: 0; padding: 0; max-height: 340px; overflow-y: auto; }
+.log li { padding: 0.4rem 0; border-bottom: 1px dotted #3a2d20; font-size: 0.9rem; }
+.log .who { font-weight: 600; }
+.log code, .mapping code, #about-panel code {
+  background: #120d08;
+  border: 1px solid #332619;
+  border-radius: 5px;
+  padding: 0.05rem 0.35rem;
+  font-size: 0.85em;
+  color: #ffc98a;
+}
+.log .call { display: block; color: var(--ink-dim); margin-top: 0.15rem; }
+
+.mapping { border-collapse: collapse; width: 100%; margin: 0.6rem 0; }
+.mapping th, .mapping td { border: 1px solid var(--panel-edge); padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; font-size: 0.92rem; }
+.mapping th { background: #241a10; }
+
+.honest li { margin: 0.35rem 0; }
+.linklike { background: none; border: none; color: var(--ember); cursor: pointer; font: inherit; text-decoration: underline; padding: 0; }
+
+footer { max-width: 1060px; margin: 0 auto; padding: 0 1.4rem 2rem; color: var(--ink-dim); font-size: 0.88rem; }
+
+@media (max-width: 760px) {
+  main { grid-template-columns: 1fr; }
+}
